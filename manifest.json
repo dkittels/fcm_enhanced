@@ -1,0 +1,19 @@
+{
+    "manifest_version": 3,
+    "name": "Food Chain Magnate Enhancer",
+    "version": "0.1",
+    "description": "Add extra functionality to the Food Chain Magnate implementation on onlineboardgamers.com",
+    "permissions": [
+        "storage"
+    ],
+    "content_scripts": [
+        {
+            "js": ["scripts/index.js"],
+            "css": ["css/main.css"],
+            "matches": [
+                "https://www.onlineboardgamers.com/FCM/*"
+            ],
+            "run_at": "document_end"
+        }
+    ]
+}

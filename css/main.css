@@ -1,0 +1,12 @@
+.timerDiv {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 25px;
+  width: 80%;
+  text-align: center;
+  background-color: black;
+  color: white;
+  opacity: 80%;
+}
