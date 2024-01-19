@@ -36,9 +36,12 @@ function initEnhancer() {
         if (result.playerTimers) {            
             playerTimers = result.playerTimers;
             if (!playerTimers[gameID]) playerTimers[gameID] = {};
+            console.log('playerTimers', playerTimers);
             initPlayersObserver();
         } else {
-            playerTimers = {"gameID": {}};
+            playerTimers = {[gameID]: {}};
+            console.log('gameID', gameID);
+            console.log('playerTimers', playerTimers);
             initPlayersObserver();
         }
     });
@@ -48,11 +51,18 @@ function initPlayersObserver() {
     const config = { attributes: false, childList: true, subtree: false };
     const observer = new MutationObserver(handlePlayersChildChange);
     observer.observe(players, config);
+
+    // There's a race condition here where players may be loaded before we get to this point in the code
+    // Check just in case
+    if (!isRunning && players.childNodes.length > 0) {
+        appendTimerDivs();
+        beginEnhancer();
+    }
 }
 
 function handlePlayersChildChange(mutationsList, observer) {
     // All players are added to #players at once, so when this fires we should be good to go
-    // timerdivs are lost as #players is redrawn at every turnswitch, so reapply    
+    // timerdivs are lost as #players is redrawn at every turnswitch, so reapply 
     appendTimerDivs();
 
     if (!isRunning) beginEnhancer();
@@ -60,7 +70,7 @@ function handlePlayersChildChange(mutationsList, observer) {
 
 function appendTimerDivs() {
     const config = { attributes: true, childList: false, subtree: false };
-
+console.log('playerTimers', playerTimers);
     players.childNodes.forEach((player) => {
         const centeredDiv = document.createElement('div');
         centeredDiv.className = 'timerDiv';
