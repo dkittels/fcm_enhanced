@@ -70,7 +70,6 @@ function handlePlayersChildChange(mutationsList, observer) {
 
 function appendTimerDivs() {
     const config = { attributes: true, childList: false, subtree: false };
-console.log('playerTimers', playerTimers);
     players.childNodes.forEach((player) => {
         const centeredDiv = document.createElement('div');
         centeredDiv.className = 'timerDiv';
