@@ -3,6 +3,10 @@
     "name": "Food Chain Magnate Enhancer",
     "version": "0.1",
     "description": "Add extra functionality to the Food Chain Magnate implementation on onlineboardgamers.com",
+    "icons": {
+        "48": "images/icon48.png",
+        "128": "images/icon128.png"
+      },
     "permissions": [
         "storage"
     ],
