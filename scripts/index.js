@@ -1,22 +1,36 @@
+// Get game variables from page
+var global;
+const s = document.createElement('script');
+s.src = chrome.runtime.getURL('scripts/global_import.js');
+s.onload = () => s.remove();
+(document.head || document.documentElement).append(s);
+
 var playerTimers;
 var players = document.querySelector('#players');
 var isRunning = false;
+var global;
 
-chrome.storage.local.get("isRunning").then((result) => {
-    if (result.isRunning) {
-        if (performance.getEntriesByType("navigation")[0].type == "reload") {
-            console.log('init enhancer (reload)');
-            initEnhancer();
+document.addEventListener('getGlobal', function (e) {
+    global = e.detail;
+    var data = e.detail;
+
+    chrome.storage.local.get("isRunning").then((result) => {
+        if (result.isRunning) {
+            if (performance.getEntriesByType("navigation")[0].type == "reload") {
+                console.log('init enhancer (reload)');
+                initEnhancer();
+            } else {
+                isRunning = true;
+            }
         } else {
-            isRunning = true;
+            console.log('init enhancer');
+            initEnhancer();
         }
-    } else {
-        console.log('init enhancer');
-        initEnhancer();
-    }
+    });
 });
 
 function initEnhancer() {
+    console.log('global', global);
     chrome.storage.local.get("playerTimers").then((result) => {
         if (result.playerTimers) {            
             playerTimers = result.playerTimers;

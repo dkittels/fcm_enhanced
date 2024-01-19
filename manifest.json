@@ -10,13 +10,15 @@
     "permissions": [
         "storage"
     ],
+    "web_accessible_resources": [{
+        "resources": ["scripts/global_import.js"],
+        "matches": ["<all_urls>"]
+    }],
     "content_scripts": [
         {
             "js": ["scripts/index.js"],
             "css": ["css/main.css"],
-            "matches": [
-                "https://www.onlineboardgamers.com/FCM/*"
-            ],
+            "matches": ["https://www.onlineboardgamers.com/FCM/*"],
             "run_at": "document_end"
         }
     ]
