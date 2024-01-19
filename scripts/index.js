@@ -8,11 +8,13 @@ s.onload = () => s.remove();
 var playerTimers;
 var players = document.querySelector('#players');
 var isRunning = false;
-var global;
+var gameID;
+var playerName;
 
 document.addEventListener('getGlobal', function (e) {
-    global = e.detail;
-    var data = e.detail;
+    const global = e.detail;
+    gameID = global.gameID;
+    playerName = global.name;
 
     chrome.storage.local.get("isRunning").then((result) => {
         if (result.isRunning) {
@@ -30,13 +32,13 @@ document.addEventListener('getGlobal', function (e) {
 });
 
 function initEnhancer() {
-    console.log('global', global);
     chrome.storage.local.get("playerTimers").then((result) => {
         if (result.playerTimers) {            
             playerTimers = result.playerTimers;
+            if (!playerTimers[gameID]) playerTimers[gameID] = {};
             initPlayersObserver();
         } else {
-            playerTimers = {};
+            playerTimers = {"gameID": {}};
             initPlayersObserver();
         }
     });
@@ -63,14 +65,12 @@ function appendTimerDivs() {
         const centeredDiv = document.createElement('div');
         centeredDiv.className = 'timerDiv';
 
-        console.log(playerTimers);
-        if (playerTimers[player.id] === undefined) {
-            playerTimers[player.id] = 0;
-            console.log(player.id);
+        if (playerTimers[gameID][player.id] === undefined) {
+            playerTimers[gameID][player.id] = 0;
         }
 
         player.appendChild(centeredDiv);
-        centeredDiv.textContent = secondsToHMS(playerTimers[player.id]);
+        centeredDiv.textContent = secondsToHMS(playerTimers[gameID][player.id]);
 
         const observer = new MutationObserver(handlePlayerClassChange);
         observer.observe(player, config);
@@ -78,7 +78,6 @@ function appendTimerDivs() {
 }
 
 function beginEnhancer() {
-    console.log('interval begins');
     const intervalId = setInterval(checkAndUpdateTimers, 1000);
     chrome.storage.local.set({"isRunning": true});
     isRunning = true;
@@ -87,7 +86,6 @@ function beginEnhancer() {
 function handlePlayerClassChange(mutationsList, observer) {
     for (const mutation of mutationsList) {
         if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-            console.log('Class changed:', mutation.target.className);
         }
     }
 }
@@ -95,8 +93,8 @@ function handlePlayerClassChange(mutationsList, observer) {
 function checkAndUpdateTimers() {
     players.childNodes.forEach(player => {
         if (player.classList.contains('active')) {
-            playerTimers[player.id]++;
-            player.querySelector('.timerDiv').textContent = secondsToHMS(playerTimers[player.id]);
+            playerTimers[gameID][player.id]++;
+            player.querySelector('.timerDiv').textContent = secondsToHMS(playerTimers[gameID][player.id]);
         }
     });
 
